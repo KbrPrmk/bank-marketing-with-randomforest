@@ -1,2 +1,13 @@
-# bank-marketing-with-randomforest
-🏦 A machine learning project that predicts whether a bank customer will subscribe to a term deposit using the Bank Marketing dataset. The model is built with Random Forest and deployed as an interactive Gradio web app for real-time predictions.
+---
+title: Bank Marketing Demo
+emoji: 🦀
+colorFrom: yellow
+colorTo: pink
+sdk: gradio
+sdk_version: 6.14.0
+python_version: '3.13'
+app_file: app.py
+pinned: false
+---
+
+Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
