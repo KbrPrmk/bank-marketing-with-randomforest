@@ -1,24 +1,14 @@
-
-# 🏦 Bank Marketing Prediction App
-![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
-![Pandas](https://img.shields.io/badge/Pandas-Data%20Processing-150458?logo=pandas)
-![Scikit-learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?logo=scikit-learn)
-![Random Forest](https://img.shields.io/badge/Model-Random%20Forest-darkgreen)
-![Gradio](https://img.shields.io/badge/Interface-Gradio-orange)
-![Hugging Face](https://img.shields.io/badge/Deploy-Hugging%20Face-yellow)
-![Machine Learning](https://img.shields.io/badge/Type-Classification-blueviolet)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-
-A machine learning web application that predicts whether a customer will subscribe to a term deposit product using bank marketing campaign data.
-
-Built with:
-
-* Python
-* Scikit-learn
-* Random Forest
-* Gradio
-* Hugging Face Spaces
-
+<h1 align="center">🏦 Bank Marketing Prediction App</h1>
+<p align="center"><b>A machine learning web application that predicts whether a customer will subscribe to a term deposit product using bank marketing campaign data.
+</b></p>
+<p align="center">
+    <img src="https://img.shields.io/badge/Python-3.10-blue?logo=python" />
+    <img src="https://img.shields.io/badge/Model-Random%20Forest-darkgreen" />
+    <img src="https://img.shields.io/badge/Interface-Gradio-orange" />
+    <img src="https://img.shields.io/badge/Deploy-Hugging%20Face-yellow" />
+    <img src="https://img.shields.io/badge/Type-Classification-blueviolet">
+    <img src="https://img.shields.io/badge/License-MIT-yellow">
+</p>
 
 ---
 
