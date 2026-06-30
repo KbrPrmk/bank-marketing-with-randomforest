@@ -12,170 +12,101 @@
 
 ---
 
-# 🚀 Live Demo
 
+ 
+# 🚀 Live Demo
+ 
 ```txt
 https://huggingface.co/spaces/KubraParmak/bank-marketing-demo
 ```
-
+ 
 ---
-
+ 
 # 📌 Project Overview
-
+ 
 This project uses the Bank Marketing Dataset to predict customer subscription behavior for term deposit campaigns.
-
+ 
 The model analyzes:
-
+ 
 * Customer demographics
 * Loan information
 * Contact details
 * Economic indicators
 * Previous campaign results
-
 and estimates the probability of subscription.
-
+ 
 ---
-
+ 
 # 🎯 Objective
-
+ 
 The goal is to classify customers into two categories:
-
+ 
 * ✅ Likely to Subscribe
 * ❌ Not Likely to Subscribe
-
 This can help financial institutions improve campaign efficiency and reduce unnecessary calls.
-
+ 
 ---
-
+ 
 # 📊 Dataset
-
+ 
 Dataset Source:
-
+ 
 * UCI Machine Learning Repository
 * Bank Marketing Dataset
-
 Target variable:
-
+ 
 ```python
 y
 ```
-
+ 
 Where:
-
+ 
 * `yes` → customer subscribed
 * `no` → customer did not subscribe
-
 ---
-
+ 
 # ⚙️ Data Preprocessing & EDA
-
+ 
 A detailed exploratory data analysis (EDA) and preprocessing pipeline was applied before model training.
-
----
-
+ 
 ## 📊 Exploratory Data Analysis (EDA)
-
+ 
 The following analyses were performed:
-
+ 
 * Missing value analysis
 * Target variable distribution analysis
 * Numerical feature analysis
 * Categorical feature analysis
 * Correlation analysis
 * Pairplot analysis
-
 These analyses helped identify feature distributions, class imbalance, and relationships between variables.
-
----
-
+ 
 ## 🧹 Data Cleaning
-
-The dataset was cleaned and prepared before training.
-
-Steps included:
-
-* Checking missing values
-* Handling categorical variables
-* Removing inconsistencies
-* Verifying feature types
-* Preparing model-ready inputs
-
----
-
+ 
+The dataset was cleaned and prepared before training. Steps included: checking missing values, handling categorical variables, removing inconsistencies, verifying feature types, preparing model-ready inputs.
+ 
 ## 🔠 One-Hot Encoding
-
-Categorical variables were transformed into numerical representations using one-hot encoding.
-
-Example:
-
-```python
-pd.get_dummies(...)
-```
-
----
-
+ 
+Categorical variables were transformed into numerical representations using one-hot encoding (`pd.get_dummies`).
+ 
 ## ✨ Feature Engineering
-
-Several additional features were created to improve predictive performance.
-
-### `was_contacted_before`
-
-Indicates whether the customer had previous contact history.
-
-### `contact_intensity`
-
-Represents campaign intensity using current and previous contacts.
-
-### `economic_pressure`
-
-Generated from economic indicators:
-
-```python
-euribor3m * emp.var.rate
-```
-
-### `duration_cat`
-
-Transforms call duration into categorical groups.
-
----
-
+ 
+* `was_contacted_before` — whether the customer had previous contact history
+* `contact_intensity` — campaign intensity using current and previous contacts
+* `economic_pressure` — derived from `euribor3m * emp.var.rate`
+* `duration_cat` — call duration transformed into categorical groups
 ## ⚖️ Imbalanced Data Handling
-
-The dataset contains class imbalance between subscription outcomes.
-
-Instead of using SMOTE, the project used:
-
-```python
-class_weight="balanced"
-```
-
-This approach preserves original data distribution while increasing sensitivity to minority classes.
-
----
-
+ 
+Instead of using SMOTE, the project used `class_weight="balanced"` to preserve original data distribution while increasing sensitivity to minority classes.
+ 
 ## ✂️ Data Splitting
-
-The dataset was split using stratified sampling:
-
-* Training Set
-* Validation Set
-* Test Set
-
-This preserves class distribution across all subsets.
-
+ 
+The dataset was split using stratified sampling (Training / Validation / Test) to preserve class distribution across all subsets.
+ 
 ---
-
+ 
 # 🤖 Machine Learning Model
-
-Algorithm used:
-
-```python
-RandomForestClassifier
-```
-
-Parameters:
-
+ 
 ```python
 RandomForestClassifier(
     n_estimators=200,
@@ -186,54 +117,62 @@ RandomForestClassifier(
     n_jobs=-1
 )
 ```
-
+ 
 ---
-
-# 📈 Model Performance
-
+ 
+# ⚠️ Important Note About Data Leakage (`duration`)
+ 
+The `call duration` feature is, by a meaningful margin, the strongest predictor in this dataset (see Feature Importance below) — but it is also a **data leakage risk**: a call's duration is only known *after* the call has ended, so it cannot realistically be used at prediction time, before a call is placed.
+ 
+This is a real limitation, not a footnote. **The headline metrics reported below (AUC 0.9496, Accuracy 0.89) include `duration` and `duration_cat` as features, and therefore overstate the model's real-world, pre-call predictive power.** A model meant for actual campaign targeting (i.e. "should we call this customer at all?") should be trained and evaluated **without** `duration`/`duration_cat`.
+ 
+| Model variant | Status |
+|---|---|
+| With `duration` (reported below) | ✅ Trained — useful for understanding what drives subscription, not for pre-call targeting |
+| Without `duration` (pre-call deployment model) | 🔲 Not yet trained — planned next step, see Roadmap |
+ 
+If you're evaluating this project for deployment relevance rather than as an EDA/feature-engineering exercise, treat the metrics below as an upper bound, not as the deployable model's expected performance.
+ 
+---
+ 
+# 📈 Model Performance (includes `duration` — see leakage note above)
+ 
 | Metric   | Score  |
 | -------- | ------ |
 | AUC-ROC  | 0.9496 |
 | Accuracy | 0.89   |
 | Recall   | 0.90   |
-
+ 
 ---
-
+ 
 # 🔍 Feature Importance
-
-Top important features:
-
+ 
 1. duration
 2. duration_cat
 3. economic_pressure
 4. euribor3m
 5. nr.employed
-
-Call duration was identified as the strongest predictor.
-
+Call duration was identified as the strongest predictor — which is precisely why it's flagged above as a leakage concern rather than presented as a clean result.
+ 
 ---
-
-# ⚠️ Important Note About Data Leakage
-
-The `duration` variable may introduce potential data leakage because call duration becomes fully known only after the conversation ends.
-
-This limitation should be considered when interpreting model performance.
-
+ 
+# 🗺️ Roadmap
+ 
+- [ ] Retrain and report metrics for a **duration-free** model (the actually deployable version for pre-call targeting)
+- [ ] Compare duration-free model performance against this duration-included baseline to quantify the real-world cost of removing the leaky feature
+- [ ] Re-run feature importance on the duration-free model to identify which legitimate, pre-call features matter most
 ---
-
+ 
 # 🖥️ Web Application
-
-The application was deployed using:
-
-* Gradio
-* Hugging Face Spaces
-
-Users can enter customer information through an interactive interface and receive real-time predictions.
-
+ 
+The application was deployed using Gradio and Hugging Face Spaces. Users can enter customer information through an interactive interface and receive real-time predictions.
+ 
+> Note: the deployed demo currently uses the `duration`-included model described above. Per the leakage note, predictions from the live demo should be read as illustrative of the dataset's patterns rather than as a production-ready pre-call scoring tool.
+ 
 ---
-
+ 
 # 📁 Project Structure
-
+ 
 ```bash
 .
 ├── app.py
@@ -243,67 +182,54 @@ Users can enter customer information through an interactive interface and receiv
 ├── requirements.txt
 ├── README.md
 ├── train.ipynb
-
 ```
-
+ 
 ---
-
+ 
 # ▶️ Run Locally
-
-Clone repository:
-
+ 
 ```bash
 git clone https://huggingface.co/spaces/KubraParmak/bank-marketing-demo
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
-
-Run app:
-
-```bash
 python app.py
 ```
-
+ 
 ---
-
+ 
 # 🧪 Example Prediction
-
-Example scenario with high subscription probability:
-
+ 
+Example scenario with high subscription probability (illustrative — uses the duration-included model):
+ 
 | Feature           | Value   |
 | ----------------- | ------- |
 | Duration          | 850     |
 | Previous Outcome  | success |
 | Campaign Contacts | 1       |
 | pdays             | 3       |
-
+ 
 Expected prediction:
-
+ 
 ```txt
 ✅ Likely to Subscribe
 ```
-
+ 
 ---
-
+ 
 # 🛠️ Technologies Used
-
+ 
 * Python
 * Pandas
 * NumPy
 * Scikit-learn
 * Gradio
 * Hugging Face
-
 ---
-
+ 
 # 👩‍💻 Developer
-
+ 
 Kübra Parmak
-
+ 
 Machine Learning & Data Analysis Project
+ 
 
 
